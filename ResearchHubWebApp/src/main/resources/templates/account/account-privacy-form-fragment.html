@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+  <title>Account Privacy Settings</title>
+</head>
+
+
+<body>
+<form class="pt-5" th:action="@{/account-settings}" method="post" th:object="${account}">
+
+  <div class="alert alert-danger" th:if="${#fields.hasErrors()}"> <strong>Changing was unsuccessfull</strong> See below for error messages</div>
+
+
+  <!-- profile display settings -->
+  <h4>Profile Display Settings</h4>
+  <p>choose what to display on your profile and to whom</p>
+
+
+  <!-- Display Forum Activity -->
+  <div class="form-group my-1">
+    <label class="form-label">Display Forum Activity</label>
+    <div class="form-select">
+      <select>
+
+      </select>
+    </div>
+  </div>
+
+
+  <!-- Display Uploaded Papers on profile -->
+  <div class="form-group my-1">
+    <label class="form-label">Display uploaded papers</label>
+    <div class="form-select">
+
+    </div>
+  </div>
+
+  <!-- Display Email on profile -->
+  <div class="form-group my-1">
+    <label class="form-label">Display email</label>
+    <div class="form-select">
+    </div>
+  </div>
+
+
+  <!-- Display Name on profile -->
+  <div class="form-group my-1">
+    <label class="form-label">Display name</label>
+    <div class="form-select">
+    </div>
+  </div>
+
+  <!-- Display Country -->
+  <div class="form-group my-1">
+    <label class="form-label">Display country</label>
+    <div class="form-select">
+    </div>
+  </div>
+
+  <!-- Display Research Facility -->
+  <div class="form-group my-1">
+    <label class="form-label">Display research facility</label>
+    <div class="form-select">
+    </div>
+  </div>
+
+  <!-- Provides visual weight & declares main button -->
+  <button type="submit" class="btn btn-primary" name="privacySubmit">Save</button> <!-- submits the information in the form to be stored -->
+  <button type="reset" class="btn btn-outline-primary">Cancel</button>
+</form>
+</body>
+</html>

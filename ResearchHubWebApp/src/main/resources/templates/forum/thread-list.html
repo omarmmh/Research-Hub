@@ -1,0 +1,103 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title th:text="${category.getTitle()}"></title>
+</head>
+<body>
+
+<section layout:fragment="jumbotron" class="bg-gray">
+    <div class="container">
+
+        <div class="jumbotron py-5">
+            <p class="display-4 brand-font" th:text="${category.getTitle()}"></p>
+            <p class="lead" th:text="${category.getBody()}"></p>
+            <hr>
+
+            <section th:replace="fragments/forum/thread-form"></section>
+
+        </div>
+    </div>
+</section>
+
+<section layout:fragment="content">
+    <div id="no-threads" th:if="${#lists.isEmpty(threads)}" class="mt-3">No threads have been created.</div>
+
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <div th:attr="id=${t.getId()}" class="card highlight-card mt-4" th:each="t: ${threads}">
+                <!-- Card Header -->
+                <div class="card-header">
+                    <div class="d-flex flex-row justify-content-end d-md-none">
+                        <p class="flex-fill text-end" style="min-width: 160px" th:text="${#dates.format(t.getDateCreated(), 'dd-MM-yyyy')}"></p>
+                    </div>
+                    <div class="d-flex flex-row justify-content-md-between justify-content-start">
+                        <h5 class="flex-fill my-0" th:attr="id=title- + ${t.getId()}" th:text="${t.getTitle()}"></h5>
+                        <p class="flex-fill text-end d-none d-md-block" style="min-width: 160px" th:text="${#dates.format(t.getDateCreated(), 'dd-MM-yyyy')}"></p>
+                    </div>
+                </div>
+                <!-- Card body -->
+                <div class="card-body">
+                    <div th:attr="id=body- + ${t.getId()}" th:utext="${t.getSnippet()}"></div></br>
+                    <a th:href="@{/forum/{catId}/thread/{id}(catId=${category.getId()}, id=${t.getId()})} "
+                       th:attr="id=link- + ${t.getId()}" class="stretched-link"></a></div>
+                <!-- Card footer -->
+                <div class="card-footer" style="z-index: 2">
+                    <div class="d-flex flex-row justify-content-between">
+                        <div class="d-flex flex-row text-end">
+                            <p class="me-2 my-0">By</p>
+                            <a class="text-decoration-none my-0" th:text="${t.getUser().getUsername()}"
+                               th:href="${'/profile/' + t.getUser().getUsername()}" target="_self" style="z-index: 2"></a>
+                        </div>
+
+                        <div class="text-end"
+                             th:if="${#authentication.getPrincipal().getUsername() == t.getUser().getEmail()}">
+                            <i th:attr="thread=${t.getId()}" class="edit-btn fa-solid fa-pencil fa-xl"></i>
+                            <span class="delete-thread-btn me-3 text-danger" style="display: none;"
+                                  th:attr="thread=${t.getId()}">delete</span>
+                            <span class="save-thread-btn me-3 text-success" th:attr="thread=${t.getId()}"
+                                  style="display: none;">save</span>
+                            <span style="display: none;" th:attr="thread=${t.getId()}"
+                                  class="cancel-edit-mode">cancel</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Delete Thread?</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Confirm delete for thread titled:<br><strong><span id="thread-title"></span></strong></p>
+                    <br>
+                    <p>Warning: This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="modal-close" type="button" class="btn btn-primary">Cancel</button>
+                    <button id="confirm-delete-thread-btn" type="button" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section layout:fragment="scripts">
+    <script th:inline="javascript" th:src="@{/js/forum/thread-list.js}"></script>
+
+</section>
+
+</body>
+</html>

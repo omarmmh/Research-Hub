@@ -1,0 +1,142 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Calendar</title>
+    <link rel="stylesheet" th:href="@{/css/events/styles.css}">
+</head>
+
+<body>
+
+<section layout:fragment="jumbotron" class="bg-gray">
+    <div class="container">
+        <div class="jumbotron pt-5 pb-3">
+            <h1 class="display-4 brand-font">Community Events</h1>
+            <p class="lead">View, edit, and manage community events.</p>
+        </div>
+    </div>
+</section>
+
+<section layout:fragment="content">
+
+    <meta id="_csrf" name="_csrf" th:csrf_content="${_csrf.token}"/>
+    <meta id="_csrf_header" name="_csrf_header" th:csrf_content="${_csrf.headerName}"/>
+    <meta id="_principal" name="_principal" th:data-principal="${user}"/>
+
+    <a id="show-modal" class="event-detail-link" href="#" style="display: none"></a>
+
+    <div id="calendar" class="calendar mt-3 shadow">
+
+        <div class="month bg-primary text-light align-items-center
+                    d-flex flex-column flex-md-row px-5 py-3 justify-content-center justify-content-md-between">
+            <div class="date pt-1">
+                <h1 class="text-uppercase mt-2 d-none d-md-block"></h1>
+                <h3 class="text-uppercase d-md-none"></h3>
+            </div>
+
+            <div>
+                <button class="btn btn-primary calendar-btn prev-month-btn"><i class="fas fa-angle-left fa-2xl"></i></button>
+                <button id="calendar-reset-btn" class="btn btn-primary calendar-btn mx-2">Today</button>
+                <button class="btn btn-primary calendar-btn next-month-btn"><i class="fas fa-angle-right fa-2xl"></i></button>
+            </div>
+        </div>
+
+        <div class="weekdays p-3 d-flex align-items-center text-center justify-content-between bg-primary text-light border-top">
+            <div class="w-100">Sun</div>
+            <div class="w-100">Mon</div>
+            <div class="w-100">Tue</div>
+            <div class="w-100">Wed</div>
+            <div class="w-100">Thu</div>
+            <div class="w-100">Fri</div>
+            <div class="w-100">Sat</div>
+        </div>
+
+        <!-- Calendar is generated and inserted here -->
+        <div class="days w-100 d-flex flex-wrap align-items-center text-end"></div>
+        <!-- End of generated calendar -->
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="addNewEventModal" tabindex="-1" aria-labelledby="addNewEventModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addNewEventModalTitle">Modal title</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="#" id="create-event-form" method="post" class="form-group rounded">
+                        <label>Title</label>
+                        <input id="modal-event-title" class="form-control" name="title" type="text" required>
+                        <label class="mt-3">Description</label>
+                        <input id="modal-event-description" class="form-control" name="description" type="text"
+                               required>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <label>Start date</label>
+                                <input id="start-date" class="form-select" name="startDate" type="datetime-local"
+                                       placeholder="start date"
+                                       required>
+                            </div>
+                            <div class="col">
+                                <label>End date</label>
+                                <input id="end-date" class="form-select" name="endDate" type="datetime-local"
+                                       placeholder="end date" required>
+                            </div>
+                        </div>
+
+                        <label class="mt-3">Event type</label>
+                        <select class="form-select" name="isVirtual">
+                            <option selected>Virtual</option>
+                            <option>In person</option>
+                        </select>
+
+                        <input required placeholder="URL" id="modal-event-location" class="form-control mt-1 mb-3"
+                               name="location" type="text">
+
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-primary" id="submit-new-event-btn" type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Detail Modal -->
+    <div class="modal fade" id="eventDetailModal" tabindex="-1" aria-labelledby="eventDetailLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="event-detail-title">Event Title Here</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="event-detail-body" class="modal-body">
+                </div>
+                <div id="event-detail-footer" class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section layout:fragment="scripts">
+    <script th:src="@{/js/events/script.js}" ></script>
+    <script th:inline="javascript">
+        if([[ ${showEvent} ]]) {
+            const id = [[${showEvent}]];
+            $(window).on("load", function() {
+                $("#show-modal").attr("data-event-id", id);
+                $("#show-modal").click();
+            })
+        }
+    </script>
+</section>
+
+
+</body>
+</html>

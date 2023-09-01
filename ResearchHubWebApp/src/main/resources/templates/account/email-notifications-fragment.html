@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Email Notification Settings</title>
+</head>
+<body>
+
+<form method="post" th:action="@{/account-settings}" th:object="${account}" class="">
+  <!-- email notification settings -->
+  <p class="mt-1">Choose for what you want to get email notifications.</p>
+
+  <div class="form-group my-1">
+    <label class="form-label fw-bold">New forum post</label>
+    <div class="form-check form-switch">
+      <input type="checkbox" class="form-control form-check-input" id="emailOnNewForumPost" th:field="*{emailOnNewForumPost}" th:value="*{emailOnNewForumPost}">
+    </div>
+  </div>
+
+  <div class="form-group my-1">
+    <label class="form-label fw-bold">Forum reply</label>
+    <div class="form-check form-switch">
+      <input type="checkbox" class="form-control form-check-input" id="emailOnForumReply" th:field="*{emailOnForumReply}" th:value="*{emailOnForumReply}">
+    </div>
+  </div>
+
+  <div class="form-group my-1">
+    <label class="form-label fw-bold">Forum comment upvoted</label>
+    <div class="form-check form-switch">
+      <input type="checkbox" class="form-control form-check-input" id="emailOnForumMessageUpvoted" th:field="*{emailOnForumMessageUpvoted}" th:value="*{emailOnForumMessageUpvoted}">
+    </div>
+  </div>
+
+  <!-- Provides visual weight & declares main button -->
+  <button type="submit" class="btn btn-primary" name="emailNotificationsSubmit">Save</button> <!-- submits the information in the form to be stored -->
+  <button type="reset" class="btn btn-outline-primary">Cancel</button>
+
+</form>
+</body>
+</html>

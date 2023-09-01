@@ -1,0 +1,20 @@
+#code-editor {
+    height: 400px;
+}
+
+.margin-glyph {
+    background: red;
+}
+
+.output-container {
+    border-left: 1px solid gray;
+    font-family: 'Cascadia Code';
+}
+
+.bg-editor {
+    background-color: #1e1e1e;
+}
+
+.disabled {
+    opacity: 0.2 !important;
+}

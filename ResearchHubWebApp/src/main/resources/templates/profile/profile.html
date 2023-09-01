@@ -1,0 +1,260 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<head>
+  <title th:text="${user.username}"></title>
+</head>
+
+<body>
+
+<section layout:fragment="content">
+  <div class="container mx-auto mt-2" style="max-width: 1050px">
+    <div th:if="${login}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <p>👋🏽 You have successfully logged in.</p>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!--Desktop Profile-->
+    <div class="card d-none d-lg-block">
+      <div class="d-flex flex-row rounded-top bg-dark" style="height:200px;">
+        <div class="d-flex flex-column ms-4 mt-5" style="width: 200px;">
+          <div class="d-inline-block position-relative">
+            <img class="img-thumbnail rounded-circle"
+                 th:src="${pfpBase64}" alt="profile picture"
+                 th:if="${pfpBase64}" style="width:200px;height:200px;">
+
+            <img class="img-thumbnail rounded-circle"
+                 th:src="@{/images/defaultPfp.png}" alt="profile picture"
+                 th:if="${pfpBase64==null}" style="width:200px;height:200px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body mx-3">
+        <div class="d-flex justify-content-end">
+          <a class="btn btn-danger" th:if="${ownProfile}" th:href="@{/account-settings}">
+            <i class="fa-solid fa-pencil me-1"></i>
+            Edit Profile
+          </a>
+
+          <div th:if="${!ownProfile}">
+            <a class="btn btn-primary" th:if="${user.email!=null}" th:href="${'mailto:'+ user.email}">
+              <i class="fa-solid fa-envelope me-1"></i>
+              Contact
+            </a>
+            <button class="btn btn-secondary" th:if="${user.email==null}" type="button" disabled>
+              <i class="fa-solid fa-envelope me-1"></i>
+              Contact
+            </button>
+          </div>
+        </div>
+
+        <h2 class="fw-bold" th:text="${user.username}"></h2>
+        <div class="d-flex flex-row mt-2">
+          <div class="col-5">
+            <p th:text="${user.getFullName()}"></p>
+          </div>
+
+          <div class="col" th:if="${user.bio != ''}">
+            <p class="fw-bold">About: </p>
+            <p th:text="${user.bio}"></p>
+          </div>
+        </div>
+
+        <div class="d-flex flex-row mt-2">
+          <p class="bg-light border border-1 rounded-pill text-center py-1 px-4 me-2"
+             th:if="${user.country != ''}" th:text="${user.country}"></p>
+          <p class="bg-light border border-1 rounded-pill text-center py-1 px-4 me-2"
+             th:if="${user.researchFacility != ''}" th:text="${user.researchFacility}"></p>
+        </div>
+      </div>
+    </div>
+
+    <!--Mobile Profile-->
+    <div class="card d-lg-none">
+      <div class="d-flex flex-row justify-content-center rounded-top bg-dark mb-3" style="height:150px;">
+        <div class="d-flex flex-column mt-4" style="width: 200px;">
+          <div class="d-inline-block position-relative">
+            <img class="img-thumbnail rounded-circle"
+                 th:src="${pfpBase64}" alt="profile picture"
+                 th:if="${pfpBase64}" style="width:200px;height:200px;">
+
+            <img class="img-thumbnail rounded-circle"
+                 th:src="@{/images/defaultPfp.png}" alt="profile picture"
+                 th:if="${pfpBase64==null}" style="width:200px;height:200px;">
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body mx-3">
+        <div class="d-flex justify-content-center mt-5">
+          <h2 class="fw-bold" th:text="${user.username}"></h2>
+        </div>
+        <div class="d-flex justify-content-center">
+          <p th:text="${user.getFullName()}"></p>
+        </div>
+
+        <div class="mt-2" th:if="${user.bio != ''}">
+          <p class="fw-bold">About: </p>
+          <p th:text="${user.bio}"></p>
+        </div>
+
+        <div class="d-flex flex-row mt-2">
+          <p class="bg-light border border-1 rounded-pill text-center py-1 px-2 me-2"
+             th:if="${user.country != ''}" th:text="${user.country}"></p>
+          <p class="bg-light border border-1 rounded-pill text-center py-1 px-2 me-2"
+             th:if="${user.researchFacility != ''}" th:text="${user.researchFacility}"></p>
+        </div>
+
+        <div class="d-flex justify-content-end">
+          <a class="btn btn-danger mt-4 mt-sm-2" th:if="${ownProfile}" th:href="@{/account-settings}">
+            <i class="fa-solid fa-pencil me-1"></i>
+            Edit Profile
+          </a>
+
+          <div th:if="${!ownProfile}">
+            <a class="btn btn-primary mt-4 mt-sm-2" th:if="${user.email!=null}" th:href="${'mailto:'+ user.email}">
+              <i class="fa-solid fa-envelope me-1"></i>
+              Contact
+            </a>
+            <button class="btn btn-secondary mt-4 mt-sm-2" th:if="${user.email==null}" type="button" disabled>
+              <i class="fa-solid fa-envelope me-1"></i>
+              Contact
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!--Events-->
+    <div th:if="${ownProfile}" class="card p-3 mt-2">
+      <h4 class="fw-bold">Upcoming Events</h4>
+
+      <p class="mt-3 mb-2 text-muted" th:if="${events.isEmpty()}">You haven't created or shown interested in any Events yet.</p>
+      <div class="row">
+        <div th:each="event: ${events}" class="col-lg-6 my-3">
+          <div class="card highlight-card h-100">
+            <div class="card-body">
+              <strong class="d-inline-block mb-2"
+                      th:classappend="${event.isVirtual()} ? text-success : text-primary"
+                      th:text="${event.isVirtual()} ? 'Online' : 'In Person'"></strong>
+              <h3 class="mb-1 brand-font" th:text="${event.title}"></h3>
+              <div class="mb-1 text-muted" th:text="${event.getFormattedDateTimeEventString()}"></div>
+              <div class="mb-1" th:text="${event.getOrganiser().getUsername()}"></div>
+              <div th:if="${event.isVirtual()}" class="d-flex mb-1 text-muted">
+                <i class="fa-solid fa-link me-2 mt-1"></i>
+                <a href="${event.location}" th:text="${event.location}"></a>
+              </div>
+              <div th:unless="${event.isVirtual()}" class="d-flex mb-1 text-muted">
+                <i class="fa-solid fa-location-dot me-2 mt-1"></i>
+                <p th:text="${event.location}"></p>
+              </div>
+
+              <a th:href="@{/events/} + ${event.id}" th:data-event-id="${event.id}" class="stretched-link"></a>
+            </div>
+
+            <div class="card-footer d-flex justify-content-start">
+              <p class="bg-light border border-1 rounded-pill text-center py-1 px-2 me-2"
+                 th:if="${user == event.organiser}">Organiser</p>
+              <p class="bg-light border border-1 rounded-pill text-center py-1 px-2 me-2"
+                 th:if="${user != event.organiser}">Participant</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-row justify-content-end">
+        <a class="btn btn-primary mt-3" th:if="${!events.isEmpty()}" th:href="@{/myEvents}">View all Events</a>
+      </div>
+    </div>
+
+
+    <!--Papers-->
+    <div class="card p-3 mt-2">
+      <div class="d-flex flex-row justify-content-between">
+        <h4 class="fw-bold">Recent Papers</h4>
+        <a th:if="${ownProfile}" th:href="@{/upload}"
+           class="btn btn-success me-2">Upload new paper</a>
+      </div>
+
+      <p class="mt-3 mb-2 text-muted" th:if="${papers.isEmpty()}">No papers uploaded.</p>
+
+      <div th:if="${!papers.isEmpty()}">
+        <div th:each="file: ${papers}">
+
+          <div class="card mt-2">
+            <div class="card-header">
+              <div class="d-flex flex-row justify-content-md-between justify-content-end">
+                <h5 class="flex-fill my-0 d-none d-md-block" th:text="${file.title}"></h5>
+                <p class="flex-fill text-end" style="min-width: 160px" th:text="${file.dateUploaded}"></p>
+              </div>
+              <h5 class="my-0 d-md-none" th:text="${file.title}"></h5>
+            </div>
+            <div class="card-body">
+              <p class="card-text" th:text="${file.description}"></p><br>
+            </div>
+            <div class="card-footer">
+              <div class="d-flex flex-row justify-content-start">
+                <div class="me-2"><p>By </p></div>
+                <div class="me-2" th:each="author: ${file.authors}">
+                  <p th:text="${author}"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="d-flex flex-row justify-content-end">
+          <a class="btn btn-primary mt-3" th:href="@{'/papers/'+${user.username}}">View all papers</a>
+        </div>
+      </div>
+    </div>
+
+
+    <!--Threads-->
+    <div th:if="${ownProfile}" class="card p-3 mt-2">
+      <h4 class="fw-bold">Recent Activity</h4>
+
+      <p class="mt-3 mb-2 text-muted" th:if="${threads.isEmpty()}">You haven't created any threads yet.</p>
+
+      <div class="card highlight-card mt-3" th:each="t: ${threads}">
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="d-flex flex-row justify-content-md-between justify-content-end">
+            <h5 class="flex-fill my-0 d-none d-md-block" th:text="${t.title}"></h5>
+            <p class="flex-fill text-end" style="min-width: 160px" th:text="${#dates.format(t.dateCreated, 'dd-MM-yyyy')}"></p>
+          </div>
+          <h5 class="my-0 d-md-none" th:text="${t.title}"></h5>
+        </div>
+
+        <!-- Card body -->
+        <div class="card-body">
+          <div th:utext="${t.snippet}"></div></br>
+          <a th:href="@{/forum/{catId}/thread/{id}(catId=${t.category.getId()}, id=${t.getId()})} "
+             class="stretched-link"></a>
+        </div>
+
+        <!-- Card Footer-->
+        <div class="card-footer">
+          <div class="d-flex flex-row justify-content-start">
+            <p class="bg-light border border-1 rounded-pill text-center py-1 px-4 me-2"
+               th:text="${t.category.title}"></p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="d-flex flex-row justify-content-end">
+        <a class="btn btn-primary mt-3" th:if="${!threads.isEmpty()}" th:href="@{/myThreads}">Manage threads</a>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+</body>
+</html>

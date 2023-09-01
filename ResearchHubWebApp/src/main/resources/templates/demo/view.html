@@ -1,0 +1,65 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Simulator</title>
+    <link rel="stylesheet" data-name="vs/editor/editor.main"
+          th:href="@{/packages/code-editor/min/vs/editor/editor.main.css}">
+    <link rel="stylesheet" th:href="@{/css/code-editor/style.css}">
+</head>
+<body>
+
+<!-- Jumbotron -->
+<section layout:fragment="jumbotron" class="bg-gray">
+    <div class="container">
+        <div class="jumbotron py-5">
+            <h1 class="display-4 brand-font">Reversible Code Simulator</h1>
+            <p class="lead">Simulate Reversible Computation in this reversible programming playground.</p>
+        </div>
+    </div>
+</section>
+
+<section layout:fragment="content">
+
+    <!-- Code editor -->
+    <div class="container">
+        <div class="row bg-editor my-3">
+            <div class="col-md-8">
+                <div id="code-editor" class="shadow"></div>
+            </div>
+            <div class="col-md-4 bg-editor output-container shadow">
+                <div class="lead text-light">Variables</div>
+
+                <style>
+                    @import url('https://fonts.cdnfonts.com/css/cascadia-code');
+                </style>
+
+                <div id="stdout" class="text-light"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <button id="step-left-btn" class="disabled btn btn-primary prev-month-btn"><i class="fas fa-angle-left fa-2xl"></i>
+        </button>
+        <button id="start-btn" class="btn btn-primary">Start</button>
+        <button id="step-right-btn" class="disabled btn btn-primary prev-month-btn"><i class="fas fa-angle-right fa-2xl"></i>
+        </button>
+    </div>
+
+</section>
+
+<!-- Scripts -->
+<section layout:fragment="scripts" th:inline="javascript">
+    <script>var require = {paths: {'vs': '/packages/code-editor/min/vs'}};</script>
+    <script th:src="@{/packages/code-editor/min/vs/loader.js}"></script>
+    <script th:src="@{/packages/code-editor/min/vs/editor/editor.main.nls.js}"></script>
+    <script th:src="@{/packages/code-editor/min/vs/editor/editor.main.js}"></script>
+    <script th:src="@{/js/code-editor/script.js}"></script>
+</section>
+
+</body>
+</html>

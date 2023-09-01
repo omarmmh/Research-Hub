@@ -1,0 +1,124 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.calendar {
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
+    /* Standard */
+}
+
+.days div {
+    position: relative;
+    padding: 12px;
+    border: 1px solid #f0f0f0;
+    height: 100px;
+    width: calc(100% / 7);
+}
+
+@media screen and (min-width: 1400px)  {
+    .days div {
+        height: 130px;
+    }
+}
+
+.days div:hover:not(.today, .prev-date, .next-date) {
+    border: 1px solid grey;
+}
+
+.prev-date,
+.next-date {
+    color: #dddddd;
+}
+
+.today {
+    border: 1px solid #1b6ec2 !important;
+}
+
+
+.event {
+    text-align: left;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: -1;
+}
+
+.mapouter {
+    position: relative;
+    text-align: right;
+    height: 350px;
+    width: 100%;
+}
+
+.gmap_canvas {
+    overflow: hidden;
+    background: none !important;
+    height: 350px;
+    width: 100%;
+}
+.add-new-event-button {
+    position: absolute;
+    right: 16px;
+    top: 0;
+}
+
+.popover {
+    min-width: 250px;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px !important;
+}
+
+.delete-event-btn, .cancel-edit-mode, .save-event-btn, .edit-event-btn{
+    cursor: pointer;
+}
+
+.is-virtual-svg {
+    display: block;
+    margin: auto;
+    width: 60%;
+    height: auto;
+}
+
+*[contenteditable="true"], #event-detail-edit-date {
+    box-sizing: content-box;
+    padding: 10px;
+    border: 2px solid #1b6ec2;
+    border-radius: 7px;
+}
+
+*[contenteditable="true"]:focus, #event-detail-edit-date:focus {
+    outline: none;
+    border-color: #9ecaed;
+    box-shadow: 0 0 10px #9ecaed;
+}
+
+#event-detail-title {
+    width: 100% !important;
+}
+
+#event-detail-edit-date {
+    display: none;
+}
+
+.calendar-btn {
+    padding: 7px 14px;
+    font-size: large;
+}
+@media screen and (min-width: 768px) {
+    .calendar-btn {
+        padding: 7px 14px;
+        font-size: large;
+    }
+}
+@media screen and (min-width: 992px) {
+    .calendar-btn {
+        padding: 10px 20px;
+        font-size: x-large;
+    }
+}

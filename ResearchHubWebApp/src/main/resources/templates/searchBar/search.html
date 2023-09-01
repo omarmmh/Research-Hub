@@ -1,0 +1,430 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Search</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+<section layout:fragment="jumbotron" class="bg-gray">
+    <div class="container">
+        <div class="jumbotron py-5">
+            <p class="display-4 brand-font">Search</p>
+            <p class="lead">Search for Users, Forum Threads and Reversible Computation related papers.</p>
+        </div>
+    </div>
+</section>
+
+<section layout:fragment="content">
+    <form class="row my-3 g-0" th:action="@{/search/}" method="post">
+        <div class="col-md-8 col-xl-9 mb-2 mb-md-0">
+            <input required class="form-control" type="search" name="search"
+                   placeholder="Search" aria-label="Search" id="search"
+                   th:value="${(search != null) ? search : ''}">
+        </div>
+
+        <div class="col-md-4 col-xl-3 d-flex">
+            <select class="flex-grow form-control form-select border border-dark"
+                    id="type" name="select">
+                <option th:value="all">All</option>
+                <option th:value="users">People</option>
+                <option th:value="papers">Internal Papers</option>
+                <option th:value="scholar">External Papers</option>
+                <option th:value="forum">Forum Threads</option>
+            </select>
+            <button class="flex-fill btn btn-outline-success ms-2" type="submit">Search</button>
+        </div>
+    </form>
+
+    <!-- Select All -->
+    <div id="all">
+        <!-- User Results -->
+        <div class="border border-2 rounded p-4">
+            <h4 class="fw-bold">People</h4>
+            <p class="text-muted " th:if="${userSearch == null}">No results.</p>
+
+            <div class="text-nowrap overflow-auto mt-4">
+                <div class="d-inline-block me-1" style="width: 225px" th:if="${userSearch}" th:each="r: ${userSearch}">
+
+                    <div class="card text-wrap highlight-card" style="height: 300px">
+
+                        <div class="d-flex flex-row justify-content-center rounded-top bg-dark mb-3" style="height:100px;">
+                            <div class="d-flex flex-column mt-4" style="width: 150px;">
+                                <div class="d-inline-block position-relative">
+                                    <img class="img-thumbnail rounded-circle"
+                                         th:src="@{/images/defaultPfp.png}" alt="profile picture"
+                                         th:if="${!r.containsKey('profilepic')}" style="width:150px;height:150px;">
+
+                                    <img class="img-thumbnail rounded-circle"
+                                         th:src="${r.profilepic}" alt="profile picture"
+                                         th:if="${r.containsKey('profilepic')}" style="width:150px;height:150px;">
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center mt-5">
+                                <h2 class="fw-bold" th:text="${r.username}"></h2>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <p th:if="${r.containsKey('name')}" th:text="${r.name}"></p>
+                            </div>
+                        </div>
+
+                        <a th:href="${r.link}" class="stretched-link"></a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row mt-3">
+            <!-- Thread Results -->
+            <div class="col-xxl-4 mb-3">
+                <div class="border border-2 rounded p-4">
+                    <h4 class="fw-bold">Forum</h4>
+                    <p class="text-muted mt-4" th:if="${threadSearch == null}">No results.</p>
+
+                    <div class="card highlight-card mt-4" th:if="${threadSearch}" th:each="r: ${threadSearch}">
+                        <div class="card-header">
+                            <div class="d-flex flex-row justify-content-md-between justify-content-end">
+                                <h5 class="flex-fill my-0 d-none d-md-block" th:text="${r.title}"></h5>
+                                <p class="flex-fill text-end" style="min-width: 160px" th:text="${r.date}"></p>
+                            </div>
+                            <h5 class="my-0 d-md-none" th:text="${r.title}"></h5>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="mb-3" th:utext="${r.snippet}"></div>
+                            <a th:href="${r.link}" class="stretched-link"></a>
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="d-flex flex-row justify-content-between">
+                                <p class="me-2 mt-1">By</p>
+                                <a class="text-decoration-none mt-1" th:text="${r.user}" th:href="${r.userLink}" target="_self" style="z-index: 2"></a>
+
+                                <p class="bg-light border border-1 rounded-pill text-center py-1 px-4 ms-auto" th:text="${r.cat}"></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paper Results -->
+            <div class="col-xxl-8">
+                <div class="border border-2 rounded p-4">
+                    <h4 class="fw-bold">Papers</h4>
+
+                    <ul class="nav nav-tabs d-flex mt-4" role="tablist">
+                        <li class="nav-item flex-fill">
+                            <a class="nav-link active fw-bold" data-bs-toggle="tab" href="#internal-papers">Internal Papers</a>
+                        </li>
+                        <li class="nav-item flex-fill fw-bold">
+                            <a class="nav-link" data-bs-toggle="tab" href="#external-papers">External Papers</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <!-- Internal Paper Results -->
+                        <div id="internal-papers" class="tab-pane active border border-top-0 p-3">
+                            <p class="text-muted" th:if="${fileSearch == null}">No results.</p>
+
+                            <div class="card mb-4" th:if="${fileSearch}" th:each="r: ${fileSearch}">
+                                <div class="card-header">
+                                    <div class="d-flex flex-row justify-content-md-between justify-content-end">
+                                        <h5 class="flex-fill my-0 d-none d-md-block" th:text="${r.title}"></h5>
+                                        <p class="flex-fill text-end" style="min-width: 160px" th:text="${r.date}"></p>
+                                    </div>
+                                    <h5 class="my-0 d-md-none" th:text="${r.title}"></h5>
+                                </div>
+
+                                <div class="card-body">
+                                    <p class="card-text" th:text="${r.snippet}"></p><br>
+                                    <div class="d-flex justify-content-end">
+                                        <a class="btn btn-primary me-2" th:href="@{r.downloadLink}">Download Paper</a>
+                                        <a class="btn btn-primary" th:href="@{r.viewLink}" target="_blank">View Paper</a>
+                                    </div>
+                                </div>
+
+                                <div class="card-footer">
+                                    <div class="d-flex flex-md-row flex-column-reverse justify-content-between">
+                                        <div class="d-flex flex-row justify-content-start">
+                                            <div class="me-2"><p>By </p></div>
+                                            <div class="me-2" th:each="author: ${r.authors}">
+                                                <a class="text-decoration-none" th:text="${author.name}"></a>
+                                            </div>
+                                        </div>
+                                        <a class="text-decoration-none" th:text="${r.uploader}" th:href="${'/profile/' + r.uploader}"></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- External Paper Results -->
+                        <div id="external-papers" class="tab-pane fade border border-top-0 p-3">
+                            <p class="text-muted" th:if="${apiSearch == null}">No results.</p>
+
+                            <div class="card highlight-card mb-4" th:if="${apiSearch}" th:each="r: ${apiSearch}">
+                                <div class="card-header">
+                                    <div class="d-flex flex-row justify-content-start">
+                                        <div class="col"><h5 class="my-0" th:text="${r.title}"></h5></div>
+                                    </div>
+                                </div>
+
+                                <div class="card-body">
+                                    <p class="card-text" th:text="${r.snippet}"></p><br>
+                                    <a class="stretched-link" th:if="${r.containsKey('link')}" th:href="${r.link}" target="_blank"></a>
+                                </div>
+
+                                <div class="card-footer" style="z-index: 2">
+                                    <div class="d-flex flex-row justify-content-start" th:if="${r.publication_info.containsKey('authors')}">
+                                        <div class="me-2"><p>By </p></div>
+                                        <div class="me-2" th:each="author: ${r.publication_info.authors}">
+                                            <a class="text-decoration-none" th:href="${author.link}" th:text="${author.name}" target="_blank"></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Select Users -->
+    <div id="usersShow" style="display: none">
+        <p class="text-muted mt-4" th:if="${userSearch == null}">No results.</p>
+
+        <div class="row">
+
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xxl-2 mb-3" th:if="${userSearch}" th:each="r: ${userSearch}">
+                <div class="card highlight-card" style="height: 300px">
+                    <div class="d-flex flex-row justify-content-center rounded-top bg-dark mb-3" style="height:100px;">
+                        <div class="d-flex flex-column mt-4" style="width: 150px;">
+                            <div class="d-inline-block position-relative">
+                                <img class="img-thumbnail rounded-circle"
+                                     th:src="@{/images/defaultPfp.png}" alt="profile picture"
+                                     th:if="${!r.containsKey('profilepic')}" style="width:150px;height:150px;">
+
+                                <img class="img-thumbnail rounded-circle"
+                                     th:src="${r.profilepic}" alt="profile picture"
+                                     th:if="${r.containsKey('profilepic')}" style="width:150px;height:150px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center mt-5">
+                            <h2 class="fw-bold" th:text="${r.username}"></h2>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <p th:if="${r.containsKey('name')}" th:text="${r.name}"></p>
+                        </div>
+                    </div>
+
+                    <a th:href="${r.link}" class="stretched-link"></a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Select Internal Papers -->
+    <div id="paperShow" style="display: none">
+        <p class="text-muted mt-4" th:if="${fileSearch == null}">No results.</p>
+
+        <div class="card mt-4" th:if="${fileSearch}" th:each="r: ${fileSearch}">
+            <div class="card-header">
+                <div class="d-flex flex-row justify-content-between">
+                    <div class="col"><h5 class="my-0" th:text="${r.title}"></h5></div>
+                    <div class="col-1" style="min-width: 160px"><p class="text-end" th:text="${r.date}"></p></div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <p class="card-text" th:text="${r.snippet}"></p><br>
+                <div class="d-flex">
+                    <a class="btn btn-primary me-2" th:href="@{r.downloadLink}">Download Paper</a>
+                    <a class="btn btn-primary" th:href="@{r.viewLink}" target="_blank">View Paper</a>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <div class="d-flex flex-md-row flex-column-reverse justify-content-between">
+                    <div class="d-flex flex-row justify-content-start">
+                        <div class="me-2"><p>By </p></div>
+                        <div class="me-2" th:each="author: ${r.authors}">
+                            <a class="text-decoration-none" th:text="${author.name}"></a>
+                        </div>
+                    </div>
+                    <a class="text-decoration-none" th:text="${r.uploader}" th:href="${'/profile/' + r.uploader}"></a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Select External Papers -->
+    <div id="externalShow" style="display: none">
+        <p class="text-muted mt-4" th:if="${apiSearch == null}">No results.</p>
+
+        <div class="card highlight-card mt-4" th:if="${apiSearch}" th:each="r: ${apiSearch}">
+            <div class="card-header">
+                <div class="d-flex flex-row justify-content-start">
+                    <div class="col"><h5 class="my-0" th:text="${r.title}"></h5></div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <p class="card-text" th:text="${r.snippet}"></p><br>
+                <a class="stretched-link" th:if="${r.containsKey('link')}" th:href="${r.link}" target="_blank"></a>
+            </div>
+
+            <div class="card-footer" style="z-index: 2">
+                <div class="d-flex flex-row justify-content-start" th:if="${r.publication_info.containsKey('authors')}">
+                    <div class="me-2"><p>By </p></div>
+                    <div class="me-2" th:each="author: ${r.publication_info.authors}">
+                        <a class="text-decoration-none" th:href="${author.link}" th:text="${author.name}" target="_blank"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Select Threads -->
+    <div id="threadShow" style="display: none">
+        <p class="text-muted mt-4" th:if="${threadSearch == null}">No results.</p>
+
+        <div class="card highlight-card mt-4" th:if="${threadSearch}" th:each="r: ${threadSearch}">
+            <div class="card-header">
+                <div class="row justify-content-between">
+                    <div class="col">
+                        <h5 class="my-0" th:text="${r.title}"></h5>
+                    </div>
+                    <div class="col-1" style="min-width: 160px">
+                        <p class="text-end" th:text="${r.date}"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="mb-3" th:utext="${r.snippet}"></div>
+                <a th:href="${r.link}" class="stretched-link"></a>
+            </div>
+
+            <div class="card-footer">
+                <div class="d-flex flex-row">
+                    <p class="me-2 mt-1">By</p>
+                    <a class="text-decoration-none mt-1" th:text="${r.user}" th:href="${r.userLink}" target="_self" style="z-index: 2"></a>
+
+                    <p class="bg-light border border-1 rounded-pill text-center py-1 px-4 ms-auto" th:text="${r.cat}"></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- JavaScript -->
+    <script th:inline="javascript">
+        if(window.history.replaceState) {
+            window.history.replaceState( null, null, window.location.href );
+        }
+
+
+        if(![[ ${result} ]]) {
+            $("#type").val('all')
+            showAll();
+        } else {
+            $( document ).ready(function() {
+                hideAny();
+                hideAll()
+            });
+        }
+
+        if([[${select}]]) {
+            $('#type').val([[${select}]]);
+            showOne([[${select}]]);
+        };
+
+
+        function showAll() {
+            $('#all').show();
+        }
+        function hideAll() {
+            $('#all').hide();
+        }
+
+        function hideAny() {
+            $("#usersShow").hide();
+            $("#externalShow").hide();
+            $("#paperShow").hide();
+            $("#threadShow").hide();
+        }
+
+        function showOne(type) {
+            switch(type) {
+                case "users":
+                    hideAny()
+                    hideAll();
+                    $("#usersShow").show();
+
+                    break;
+                case "papers":
+                    hideAny();
+                    hideAll();
+                    $("#paperShow").show();
+
+                    break;
+                case "scholar":
+                    hideAny();
+                    hideAll();
+                    $("#externalShow").show();
+
+                    break;
+                case "forum":
+                    hideAny();
+                    hideAll();
+                    $("#threadShow").show();
+
+
+                    break;
+                case "all":
+                    hideAny();
+                    showAll();
+                    break;
+            }
+        }
+
+
+        $('#type').on('change', function () {
+            let newType = $(this).val();
+            showOne(newType);
+        });
+    </script>
+
+
+</section>
+
+</body>
+</html>

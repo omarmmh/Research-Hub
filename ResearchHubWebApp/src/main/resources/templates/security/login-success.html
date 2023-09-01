@@ -1,0 +1,23 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Success</title>
+</head>
+<body>
+
+<section layout:fragment="content">
+    <p class="display-5 my-3">Hi, <span th:text="${user.getFirstName()}"></span> 👋🏽</p>
+    <p>You have successfully logged in.</p>
+    <p>
+        This is the default login success page specified in the SecurityConfig and managed by the AuthenticationController<br>
+        This is probably not needed as a user who has logged in will probably be redirected to the dashboard page.<br>
+        This is just used for testing the user has logged in and that we can access user details such as their name, as
+        seen above.
+    </p>
+</section>
+
+</body>
+</html>

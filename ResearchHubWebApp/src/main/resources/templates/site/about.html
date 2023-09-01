@@ -1,0 +1,124 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<!-- intro -->
+<head>
+    <title>About Reversible Computation</title>
+</head>
+<body class="main">
+
+<section layout:fragment="jumbotron" class="bg-gray">
+    <div class="container">
+        <div class="jumbotron py-5">
+            <h1 class="display-4 brand-font">What is reversible computation?</h1>
+            <p class="lead">Reversible computation is a type of computing where information is not lost during the computation process.
+                Every operation has an inverse, meaning you can reverse the operation and recover the original inputs.
+                When a computation or calculation is performed in traditional computing, some information is lost in the process. In a simple example, if you add two numbers together,
+                you get the sum result but lose information about the individual numbers.</p>
+        </div>
+    </div>
+</section>
+
+<section class="container" layout:fragment="content">
+    <div class="row justify-content-between">
+        <!--   Benefits   -->
+        <div class="col-6">
+            <div class="border rounded my-5 p-3">
+                <h2 class="brand-font my-3">What Are The <b class="text-primary">Benefits</b> Of Reversible Computation</h2>
+                <button type="button" class="collapsible lead my-1 p-3 bg-primary text-white">Reduced Energy Loss &#x2193;</button>
+                <div class="content">
+                    <p>Reversible computation avoids the energy loss associated with irreversible operations, it has the potential to be more energy efficient than traditional computing.</p>
+                </div>
+                <button type="button" class="collapsible lead my-1 p-3 bg-primary text-white">Key Concept in Quantum Computing &#x2193;</button>
+                <div class="content">
+                    <p>Reversible computation is a key concept in quantum computing, where the manipulation of quantum states must be reversible in order to avoid losing valuable information.</p>
+                </div>
+                <button type="button" class="collapsible lead my-1 p-3 bg-primary text-white">Strong Encryption &#x2193;</button>
+                <div class="content">
+                    <p>Reversible computing can be utilized in some types of encryption algorithms where the ability to reverse the encryption process to recover the original data is required. By using reversible operations to alter encrypted data, reversible computation can help make encryption more secure and difficult to crack.</p>
+                </div>
+            </div >
+        </div>
+
+        <!--   Drawbacks   -->
+        <div class="col-6">
+            <div class="border rounded my-5 p-3">
+                <h2 class="brand-font my-3">What Are The <b class="text-danger">Drawbacks</b> Of Reversible Computation</h2>
+                <button type="button" class="collapsible1 lead my-1 p-3 bg-danger text-white">Design Is Complex &#x2193;</button>
+                <div class="content">
+                    <p>Reversible computation requires careful design and planning, which can make it more challenging and time-consuming to implement than traditional computing.</p>
+                </div>
+                <button type="button" class="collapsible1 lead my-1 p-3 bg-danger text-white">Limited Applicability &#x2193;</button>
+                <div class="content bg-light">
+                    <p>Reversible computation is not suitable for all types of computing tasks. Some algorithms and operations are inherently irreversible, making them difficult to implement using reversible computation.</p>
+                </div>
+                <button type="button" class="collapsible1 lead my-1 p-3 bg-danger text-white">More Hardware Required &#x2193;</button>
+                <div class="content">
+                    <p>Reversible computation may require additional hardware, such as auxiliary bits or reversible gates, which can increase the complexity and cost of a computing system.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-2 p-3">
+        <h3 class="brand-font">Find Out More Here</h3>
+        <p class="lead"> This Research Community Hub was designed to assist in the research & development of reversible computation. We hope to this platform will become a centralized hub for all the amazing & hard-working researchers within this field!</p>
+        <br>
+        <ul>
+            <li> Simulate Reverse Computation Here: <a th:href="@{/demo}">Reverse Computation Simulator</a></li>
+            <li> Search for Content Here: <a th:href="@{/search/}">Search</a> </li>
+            <li> Join the Community Here: <a th:href="@{/account-creation}">Join Now!</a></li>
+        </ul>
+        <h5>Let's Make A Breakthrough Together!</h5>
+    </div>
+
+
+
+    <script>
+        var coll = document.querySelectorAll(".collapsible, .collapsible1");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
+                }
+            });
+        }
+    </script>
+
+
+</section>
+</body>
+</html>
+
+<style>
+    .collapsible {
+        cursor: pointer;
+        width: 100%;
+        border: none;
+        outline: none;
+        text-align: left;
+    }
+
+    .collapsible1 {
+        cursor: pointer;
+        width: 100%;
+        border: none;
+        outline: none;
+        text-align: left;
+    }
+
+    .content {
+        margin: 20px 0;
+        display: none;
+        overflow: hidden;
+    }
+
+</style>

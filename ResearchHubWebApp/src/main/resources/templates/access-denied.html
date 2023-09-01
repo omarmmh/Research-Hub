@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<head>
+  <title>Access Denied</title>
+</head>
+<body>
+
+<section layout:fragment="jumbotron" class="bg-gray">
+  <div class="container">
+    <div class="jumbotron py-5">
+      <p class="display-4 brand-font" th:text="ACCESS DENIED"></p>
+      <p class="lead">You don't have permissions to access this page.</p>
+    </div>
+  </div>
+</section>
+
+<section layout:fragment="content">
+  <div class="mt-3">
+    <a th:href="@{/}">Go back to home page</a>
+  </div>
+</section>
+
+</body>
+</html>

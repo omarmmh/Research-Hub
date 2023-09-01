@@ -1,0 +1,62 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Upload Research Paper</title>
+</head>
+<body>
+
+<section layout:fragment="jumbotron" class="bg-gray">
+    <div class="container">
+        <div class="jumbotron pt-3 pb-5">
+            <a th:href="@{/myPapers}"><i
+                    class="fa-solid fa-arrow-left fa-xl"></i> </a>
+            <h1 class="display-4 brand-font mt-3">Upload Research Paper</h1>
+            <p class="lead">Upload your Research Papers here.</p>
+            <p class="lead">Only Accepting files in PDF format and a file size up to 10MB.</p>
+        </div>
+    </div>
+</section>
+
+<section layout:fragment="content">
+    <div class="row mt-5">
+        <div class="col-md-3"></div>
+        <form class="col-md-6" th:object="${paperdata}" th:action="@{/uploadFile}" method="post" enctype="multipart/form-data" >
+            <label for="formFile" class="form-label"><h2>Upload File</h2></label>
+            <p id="result" th:text="${result}"></p><br>
+            <input required class="form-control mb-3" type="file" id="formFile" name="file">
+
+            <label for="title" class="form-label"><h4>Title</h4></label>
+            <input required type="text" class="form-control mb-3" id="title" th:field="*{title}">
+
+            <div class="row">
+                <div class="col-md-8">
+                    <label for="authors" class="form-label mt-2"><h4>Authors</h4></label>
+                    <ul id="authors" class="list-unstyled">
+                        <li id="userInput" class="mb-1"><input required type="text" class="form-control" id="author0" th:field="*{authors[__${0}__]}"></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <button class="btn btn-success" type="button" id="addAuthor">Add Author</button>
+                <button class="btn btn-danger" type="button" id="deleteAuthor">Delete Author</button>
+            </div>
+
+            <label for="description" class="form-label"><h4>Description</h4></label>
+            <textarea required th:maxlength="500" type="text" class="form-control mb-3" id="description" th:field="*{description}"></textarea>
+
+            <button class="btn btn-primary mt-2" type="submit">Upload</button>
+        </form>
+        <div class="col-md-3"></div>
+    </div>
+</section>
+
+<section layout:fragment="scripts">
+    <script th:inline="javascript" th:src="@{/js/files/upload.js}">
+    </script>
+</section>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title th:text="${user.username + ' - Papers'}"></title>
+</head>
+<body>
+
+<section layout:fragment="jumbotron" class="bg-gray">
+    <div class="container">
+        <div class="jumbotron pt-3 pb-5">
+            <div th:if="${ownProfile}">
+                <a th:href="@{/myProfile}"><i
+                        class="fa-solid fa-arrow-left fa-xl"></i> </a>
+                <h1 class="display-4 brand-font mt-3">Your Research Papers</h1>
+                <p class="lead">View your Research Papers here.</p>
+                <a class="btn btn-success my-3" th:href="@{/upload}">Upload new paper</a>
+            </div>
+
+            <div th:if="${!ownProfile}">
+                <a th:href="@{/profile/} + ${user.username}"><i
+                        class="fa-solid fa-arrow-left fa-xl"></i> </a>
+                <h1 class="display-4 brand-font mt-3" th:text="${user.username}"></h1>
+                <p class="lead">View their Research Papers here.</p>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<section layout:fragment="content">
+
+    <p class="mt-2 text-muted" th:if="${userPapers.isEmpty()}">No papers uploaded.</p>
+
+    <div class="my-3" th:each="paper: ${userPapers}">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex flex-row justify-content-md-between justify-content-end">
+                    <h5 class="flex-fill my-0 d-none d-md-block" th:text="${paper.getTitle()}"></h5>
+                    <p class="flex-fill text-end" style="min-width: 160px" th:text="${paper.getDateUploaded()}"></p>
+                </div>
+                <h5 class="my-0 d-md-none" th:text="${paper.getTitle()}"></h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text" th:text="${paper.getDescription()}"></p><br>
+                <div class="d-flex">
+                    <button th:if="${ownProfile}" type="button" class="btn btn-danger me-auto" data-bs-toggle="modal" data-bs-target="#exampleModal" aria-label="Delete">Delete</button>
+                    <a class="btn btn-primary ms-2" th:href="@{'/download/'+${paper.getId()}}">Download Paper</a>
+                    <a class="btn btn-primary ms-2" th:href="@{'/paper/'+${paper.getId()}}" target="_blank">View Paper</a>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex flex-row justify-content-start">
+                    <div class="me-2"><p>By </p></div>
+                    <div class="me-2" th:each="author: ${paper.getAuthors()}">
+                        <p th:text="${author}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="card-header d-flex">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Paper</h1>
+                        <button  type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this paper?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a id="delete" class="btn btn-danger" th:href="@{'/delete/'+${paper.getId()}}">Delete Paper</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p id="result" class="invisible" th:text="${result}"></p>
+
+</section>
+<section layout:fragment="scripts">
+    <script th:inline="javascript" th:src="@{/js/files/delete.js}">
+    </script>
+</section>
+</body>
+</html>

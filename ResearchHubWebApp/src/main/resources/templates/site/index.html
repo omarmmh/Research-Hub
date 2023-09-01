@@ -1,0 +1,103 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+
+<head>
+    <title>Home</title>
+</head>
+
+<body>
+
+<section layout:fragment="jumbotron" class="bg-gray">
+    <div class="container">
+        <div class="jumbotron py-5">
+            <div class="row">
+                <div class="col-lg-8">
+                    <h1 class="display-4 brand-font">Research Hub</h1>
+                    <p class="lead">
+                        Join the Revolution in Advancing Reversible Computational Research.
+                    </p>
+                    <hr class="my-4">
+                    <p>Welcome to the academic research community hub for reversible computation. Here you can gain
+                        access to the latest
+                        and cutting-edge research in the field of reversible computation. Our mission is to bring
+                        together the
+                        brightest minds in academia and industry to explore the new frontiers of this exciting
+                        field. By
+                        signing
+                        up, you will have access to a wealth of information, including research papers, videos, and
+                        discussion
+                        forums where you can engage with other experts in the field. Whether you are a student,
+                        researcher, or
+                        professional, you will find something of value on this website. So what are you waiting for?
+                        Sign up
+                        today and join the conversation!</p>
+                </div>
+                <div class="col-lg-4 d-none d-lg-block d-flex align-items-center justify-content-center">
+                    <img th:src="@{/images/index.png}" class="img-fluid">
+                </div>
+            </div>
+            <p class="lead">
+                <a class="btn btn-primary btn-lg mt-4" th:href="@{/account-creation}" role="button">Sign up now!</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+<section layout:fragment="content">
+    <h3 class="brand-font mt-5">Latest publications</h3>
+    <div th:unless="${#lists.isEmpty(papers)}">
+        <div class="row">
+            <div th:each="paper: ${papers}" class="col-lg-6 my-3">
+                <div class="card h-100 shadow highlight-card">
+                    <div class="card-body">
+                        <h3 class="mb-1 brand-font" th:text="${paper.title}"></h3>
+                        <div class="mb-1 text-muted" th:text="${paper.getDateUploaded()}"></div>
+                        <div class="d-inline" th:each="author: ${paper.getAuthors()}">
+                            <a class="mb-1 text-muted" th:text="${author}"></a>
+                        </div>
+                        <hr>
+                        <p class="card-text mb-auto" th:text="${paper.getDescription()}"></p>
+                    </div>
+                    <a th:href="@{'/paper/'+${paper.getId()}}" target="_blank" class="stretched-link" ></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(papers)}" class="text-muted">No papers uploaded yet.</div>
+
+    <h3 class="brand-font mt-5 my-3">Upcoming events</h3>
+    <div th:unless="${#lists.isEmpty(events)}">
+        <div class="row">
+            <div th:each="event: ${events}" class="col-lg-6 my-3">
+                <div class="card h-100 shadow highlight-card">
+                    <div class="card-body">
+                        <strong class="d-inline-block mb-2"
+                                th:classappend="${event.isVirtual()} ? text-success : text-primary"
+                                th:text="${event.isVirtual()} ? 'Online' : 'In Person'"></strong>
+                        <h3 class="mb-1 brand-font" th:text="${event.title}"></h3>
+                        <div class="mb-1 text-muted" th:text="${event.getFormattedDateTimeEventString()}"></div>
+                        <div class="mb-1" th:text="${event.getOrganiser().getUsername()}"></div>
+                        <div th:if="${event.isVirtual()}" class="d-flex mb-1 text-muted">
+                            <i class="fa-solid fa-link me-2 mt-1"></i>
+                            <a href="${event.location}" th:text="${event.location}"></a>
+                        </div>
+                        <div th:unless="${event.isVirtual()}" class="mb-1 text-muted">
+                            <i class="fa-solid fa-link me-2 mt-1"></i>
+                            <p th:text="${event.location}"></p>
+                        </div>
+                        <hr>
+                        <p class="card-text mb-auto" th:text="${event.getSnippet()}"></p>
+                    </div>
+                    <a th:href="@{/events/} + ${event.id}" th:data-event-id="${event.id}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(events)}" class="text-muted">No events added yet.</div>
+
+</section>
+
+</body>
+
+</html>

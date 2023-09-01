@@ -1,0 +1,175 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title th:text="${thread.getTitle()}"></title>
+</head>
+<body>
+
+<section layout:fragment="jumbotron" class="bg-gray">
+    <div class="container">
+        <div class="jumbotron py-3">
+            <a th:href="${returnLink}"><i
+                    class="fa-solid fa-arrow-left fa-xl"></i></a>
+        </div>
+</section>
+
+<section layout:fragment="content">
+
+    <div class="card my-5">
+        <div class="card-header">
+            <h1 th:text="${thread.getTitle()}" class="display-4 brand-font my-3"></h1>
+        </div>
+
+        <div class="card-body">
+            <p class="lead" th:utext="${thread.getBody()}"></p></br>
+        </div>
+
+        <div class="card-footer">
+            <p class="d-none d-md-block">By
+                <a class="text-decoration-none mt-1" th:text="${thread.getUser().getUsername()}"
+                   th:href="${'/profile/' + thread.getUser().getUsername()}" target="_self"></a>
+            </p>
+            <div class="d-flex flex-column-reverse flex-md-row align-items-md-end justify-content-md-between justify-content-start mb-2">
+                <div class="d-flex flex-row justify-content-md-start justify-content-between mt-2 mt-md-0">
+                    <div class="d-flex flex-sm-row flex-column">
+                        <p class="text-muted">Asked:
+                        <p class="fw-bold me-2" th:text="${#dates.format(thread.getDateCreated(), 'dd-MM-yyyy HH:mm')}"></p></p>
+                    </div>
+
+                    <div class="d-flex flex-sm-row flex-column">
+                        <p class="text-muted">Modified:
+                        <p class="fw-bold me-2" th:text="${#dates.format(thread.getDateModified(), 'dd-MM-yyyy HH:mm')}"></p></p>
+                    </div>
+
+                    <div class="d-flex flex-sm-row flex-column">
+                        <p class="text-muted">Viewed:
+                        <p class="fw-bold" th:text="${thread.getPageViewCount()}"></p></p>
+                    </div>
+                </div>
+
+                <div class="d-flex flex-row justify-content-between text-end">
+                    <p class="d-md-none">By
+                        <a class="text-decoration-none mt-1" th:text="${thread.getUser().getUsername()}"
+                           th:href="${'/profile/' + thread.getUser().getUsername()}" target="_self"></a>
+                    </p>
+
+                    <button id="add-comment" class="btn btn-primary">Add new comment</button>
+                    <button type="button" style="display: none" id="comment-submit-btn" class="btn btn-primary ms-3"
+                            form="add-comment-form" th:attr="thread=${thread.getId()}">Submit
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section id="comments">
+        <meta id="_csrf" name="_csrf" th:csrf_content="${_csrf.token}"/>
+        <meta id="_csrf_header" name="_csrf_header" th:csrf_content="${_csrf.headerName}"/>
+
+        <div>
+            <form class="mb-3 border border-2 p-3 bg-light rounded" id="add-comment-form" style="display: none">
+                <p class="lead mb-1">Comment</p>
+                <textarea id="statictinymce" class="form-control"></textarea>
+            </form>
+        </div>
+
+        <hr class="my-5">
+
+        <div id="no-comments" th:if="${#lists.isEmpty(thread.getCommentList())}" class="mt-3">
+            <br>No comments have been added yet.
+        </div>
+
+        <div th:id="${comment.getId()}" class="card mt-4" th:each="comment: ${thread.getCommentList()}">
+
+            <div class="card-header">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col">
+                        <a class="text-decoration-none" th:href="${'/profile/' + comment.getUser().getUsername()}">
+                            <h5 th:attr="id=title- + ${comment.getId()}" th:text="${comment.getUser().getUsername()}"></h5>
+                        </a>
+                    </div>
+                    <div class="col">
+                        <div class="text-end" th:text="${#dates.format(comment.getDateCreated(), 'dd-MM-yyyy')}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="row justify-content-start">
+                    <div class="col-1 text-center">
+
+                        <i data-vote-type="up" class="vote-btn fa-solid fa-caret-up fa-2xl"
+                           th:attr="comment-id=${comment.getId()}"
+                           th:style="${voteType=='up' and commentId==comment.getId() ? 'color:green' : 'color:black'}"></i>
+
+                        <p style="min-width: 20px" th:attr="id=votecount-+${comment.getId()}" th:text="${comment.getVoteCount}"></p>
+
+                        <i data-vote-type="down" class="vote-btn fa-solid fa-caret-down fa-2xl"
+                           th:attr="comment-id=${comment.getId()}"
+                           th:style="${voteType=='down' and commentId==comment.getId() ? 'color:red' : 'color:black'}"></i>
+
+                    </div>
+                    <div class="col ms-1">
+                        <div th:attr="id=body- + ${comment.getId()}" th:utext="${comment.getBody()}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card-footer">
+                <div class="row align-items-center justify-content-between text-light">
+                    .
+                    <div class="col text-end text-dark"
+                         th:if="${#authentication.getPrincipal().getUsername() == comment.getUser().getEmail()}">
+                        <i th:attr="comment=${comment.getId()}"
+                           class="edit-btn fa-solid fa-pencil fa-xl"></i>
+
+                        <span class="delete-comment-btn me-3 text-danger" style="display: none;"
+                              th:attr="comment=${comment.getId()}">delete</span>
+
+                        <span class="save-comment-btn me-3 text-success" th:attr="comment=${comment.getId()}"
+                              style="display: none;">save</span>
+
+                        <span style="display: none;" th:attr="comment=${comment.getId()}"
+                              class="cancel-edit-mode">cancel</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <!-- End of Comments Section -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Delete Comment?</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Confirm delete for comment: <br><strong><span id="comment-body"></span></strong></p>
+                    <br>
+                    <p>Warning: This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button id="modal-close" type="button" class="btn btn-primary">Cancel</button>
+                    <button id="confirm-delete-comment-btn" type="button" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<section layout:fragment="scripts">
+    <script th:src="@{/js/forum/thread-detail.js}"></script>
+</section>
+
+</body>
+</html>
